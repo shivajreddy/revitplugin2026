@@ -1,0 +1,98 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*" # e.g. v1.2.3 or v1.2.3-rc.1
+
+env:
+  DOTNET_VERSION: "8.0.x"
+  SOLUTION: "RevitPlugin2026.sln"
+
+jobs:
+  release:
+    name: Build, Test & Release
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract version from tag
+        id: version
+        shell: bash
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/Directory.Packages.props') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore
+        run: dotnet restore ${{ env.SOLUTION }}
+
+      - name: Build Release
+        run: >
+          dotnet build ${{ env.SOLUTION }}
+          --configuration Release
+          --no-restore
+          -p:Platform=x64
+          -p:Version=${{ steps.version.outputs.version }}
+          -p:AssemblyVersion=${{ steps.version.outputs.version }}.0
+          -p:FileVersion=${{ steps.version.outputs.version }}.0
+
+      - name: Run unit tests
+        run: >
+          dotnet test ${{ env.SOLUTION }}
+          --configuration Release
+          --no-build
+          --filter "Category!=Integration"
+          --logger "trx;LogFileName=release-test-results.trx"
+          --results-directory ./TestResults
+          -p:Platform=x64
+
+      - name: Publish test results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Release Test Results
+          path: TestResults/*.trx
+          reporter: dotnet-trx
+
+      - name: Package plugin as zip
+        shell: pwsh
+        run: |
+          $ver = "${{ steps.version.outputs.version }}"
+          $outDir = "artifacts\RevitPlugin2026-$ver"
+          New-Item -ItemType Directory -Force $outDir | Out-Null
+
+          # DLLs go in a subfolder matching the .addin Assembly path
+          $dllDir = "$outDir\RevitPlugin2026"
+          New-Item -ItemType Directory -Force $dllDir | Out-Null
+          Copy-Item src\RevitPlugin2026\bin\Release\RevitPlugin2026.dll $dllDir
+          Copy-Item src\RevitPlugin2026\bin\Release\*.dll $dllDir -Exclude RevitAPI*.dll
+
+          # .addin manifest goes in the Addins root (one level up from the DLL folder)
+          Copy-Item src\RevitPlugin2026\RevitPlugin2026.addin $outDir
+
+          # Zip it
+          Compress-Archive -Path $outDir -DestinationPath "artifacts\RevitPlugin2026-$ver.zip"
+          Write-Host "Created artifacts\RevitPlugin2026-$ver.zip"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref, '-rc') || contains(github.ref, '-beta') || contains(github.ref, '-alpha') }}

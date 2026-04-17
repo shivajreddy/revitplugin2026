@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>x64</Platforms>
+    <RevitVersion>2026</RevitVersion>
+    <RevitInstallPath>C:\Program Files\Autodesk\Revit $(RevitVersion)</RevitInstallPath>
+    <RevitAddinsUserPath>$(APPDATA)\Autodesk\Revit\Addins\$(RevitVersion)</RevitAddinsUserPath>
+  </PropertyGroup>
+</Project>

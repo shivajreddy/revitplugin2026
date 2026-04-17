@@ -1,0 +1,45 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevitPlugin2026", "src\RevitPlugin2026\RevitPlugin2026.csproj", "{A1B2C3D4-0001-0001-0001-000000000001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevitPlugin2026.Tests", "tests\RevitPlugin2026.Tests\RevitPlugin2026.Tests.csproj", "{A1B2C3D4-0002-0002-0002-000000000002}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevitPlugin2026.IntegrationTests", "tests\RevitPlugin2026.IntegrationTests\RevitPlugin2026.IntegrationTests.csproj", "{A1B2C3D4-0003-0003-0003-000000000003}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A1B2C3D4-0010-0010-0010-000000000010}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A1B2C3D4-0011-0011-0011-000000000011}"
+EndProject
+
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A1B2C3D4-0001-0001-0001-000000000001}.Debug|x64.ActiveCfg = Debug|x64
+		{A1B2C3D4-0001-0001-0001-000000000001}.Debug|x64.Build.0 = Debug|x64
+		{A1B2C3D4-0001-0001-0001-000000000001}.Release|x64.ActiveCfg = Release|x64
+		{A1B2C3D4-0001-0001-0001-000000000001}.Release|x64.Build.0 = Release|x64
+		{A1B2C3D4-0002-0002-0002-000000000002}.Debug|x64.ActiveCfg = Debug|x64
+		{A1B2C3D4-0002-0002-0002-000000000002}.Debug|x64.Build.0 = Debug|x64
+		{A1B2C3D4-0002-0002-0002-000000000002}.Release|x64.ActiveCfg = Release|x64
+		{A1B2C3D4-0002-0002-0002-000000000002}.Release|x64.Build.0 = Release|x64
+		{A1B2C3D4-0003-0003-0003-000000000003}.Debug|x64.ActiveCfg = Debug|x64
+		{A1B2C3D4-0003-0003-0003-000000000003}.Debug|x64.Build.0 = Debug|x64
+		{A1B2C3D4-0003-0003-0003-000000000003}.Release|x64.ActiveCfg = Release|x64
+		{A1B2C3D4-0003-0003-0003-000000000003}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A1B2C3D4-0001-0001-0001-000000000001} = {A1B2C3D4-0010-0010-0010-000000000010}
+		{A1B2C3D4-0002-0002-0002-000000000002} = {A1B2C3D4-0011-0011-0011-000000000011}
+		{A1B2C3D4-0003-0003-0003-000000000003} = {A1B2C3D4-0011-0011-0011-000000000011}
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

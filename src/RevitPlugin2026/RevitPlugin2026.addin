@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>RevitPlugin2026</Name>
+    <!-- Assembly path is relative to the folder containing this .addin file.
+         Both the .addin and the RevitPlugin2026\ subfolder sit in the Addins root. -->
+    <Assembly>RevitPlugin2026\RevitPlugin2026.dll</Assembly>
+    <!-- IMPORTANT: This GUID is the plugin's permanent identity in Revit.
+         Never change it across versions. Generate a new one only for a new plugin. -->
+    <AddInId>a1b2c3d4-dead-beef-cafe-000000000001</AddInId>
+    <FullClassName>RevitPlugin2026.Application</FullClassName>
+    <VendorId>YOURCMP</VendorId>
+    <VendorDescription>YourCompany, https://yourcompany.com</VendorDescription>
+  </AddIn>
+</RevitAddIns>

@@ -1,0 +1,60 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <AssemblyName>RevitPlugin2026</AssemblyName>
+    <RootNamespace>RevitPlugin2026</RootNamespace>
+    <UseWPF>true</UseWPF>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <Company>YourCompany</Company>
+    <Product>RevitPlugin2026</Product>
+    <Description>A Revit 2026 Plugin</Description>
+    <Copyright>Copyright © 2026 YourCompany</Copyright>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Revit API stubs: compile-time only, never copied to output.
+         The real DLLs are provided by the running Revit process. -->
+    <PackageReference Include="Revit_All_Main_Versions_API_x64" PrivateAssets="all" ExcludeAssets="runtime" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="Serilog.Sinks.Debug" />
+  </ItemGroup>
+
+  <!-- Belt-and-suspenders: ensure Revit API assemblies never end up in output -->
+  <Target Name="ExcludeRevitAssemblies" AfterTargets="ResolveReferences">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)"
+        Condition="'%(Filename)' == 'RevitAPI' Or '%(Filename)' == 'RevitAPIUI'" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Debug builds auto-deploy to the user Revit Addins folder -->
+  <Target Name="DeployToRevit" AfterTargets="Build"
+          Condition="'$(Configuration)' == 'Debug' And '$(OS)' == 'Windows_NT'">
+    <PropertyGroup>
+      <DeployTarget>$(RevitAddinsUserPath)\RevitPlugin2026</DeployTarget>
+    </PropertyGroup>
+    <MakeDir Directories="$(DeployTarget)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DeployTarget)" ContinueOnError="true" />
+    <Copy SourceFiles="$(TargetDir)$(AssemblyName).pdb" DestinationFolder="$(DeployTarget)" ContinueOnError="true" />
+    <Copy SourceFiles="$(ProjectDir)RevitPlugin2026.addin" DestinationFolder="$(RevitAddinsUserPath)" ContinueOnError="true" />
+  </Target>
+
+</Project>

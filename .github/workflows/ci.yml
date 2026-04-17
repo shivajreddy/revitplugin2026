@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+
+env:
+  DOTNET_VERSION: "8.0.x"
+  SOLUTION: "RevitPlugin2026.sln"
+  BUILD_CONFIG: "Release"
+  PLATFORM: "x64"
+
+jobs:
+  build-and-test:
+    name: Build & Unit Test
+    # Windows is required — net8.0-windows WPF projects need the Windows SDK
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/Directory.Packages.props', '**/NuGet.config') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore
+        run: dotnet restore ${{ env.SOLUTION }}
+
+      - name: Build
+        run: >
+          dotnet build ${{ env.SOLUTION }}
+          --configuration ${{ env.BUILD_CONFIG }}
+          --no-restore
+          -p:Platform=${{ env.PLATFORM }}
+
+      - name: Unit tests (exclude Integration)
+        run: >
+          dotnet test ${{ env.SOLUTION }}
+          --configuration ${{ env.BUILD_CONFIG }}
+          --no-build
+          --filter "Category!=Integration"
+          --logger "trx;LogFileName=test-results.trx"
+          --collect:"XPlat Code Coverage"
+          --results-directory ./TestResults
+          -p:Platform=${{ env.PLATFORM }}
+
+      - name: Publish test results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Unit Test Results
+          path: TestResults/*.trx
+          reporter: dotnet-trx
+          fail-on-error: false
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          directory: ./TestResults
+          fail_ci_if_error: false
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-release-${{ github.sha }}
+          path: src/RevitPlugin2026/bin/Release/
+          retention-days: 7
+
+  lint:
+    name: Code Style Check
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore ${{ env.SOLUTION }}
+
+      - name: Format check
+        run: >
+          dotnet format ${{ env.SOLUTION }}
+          --verify-no-changes
+          --no-restore
+          --verbosity diagnostic
