@@ -21,6 +21,7 @@ public class Application : IExternalApplication
                 path: Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                     "RevitPlugin2026", "logs", "plugin-.log"),
+                formatProvider: CultureInfo.InvariantCulture,
                 rollingInterval: RollingInterval.Day,
                 retainedFileCountLimit: 7)
             .WriteTo.Debug(formatProvider: CultureInfo.InvariantCulture)
