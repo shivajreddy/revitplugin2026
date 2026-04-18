@@ -5,7 +5,7 @@ namespace RevitPlugin2026.Models;
 /// This is the boundary between the Revit-dependent layer and testable business logic.
 /// </summary>
 public record ElementData(
-    int Id,
+    long Id,
     string Name,
     string Category,
     string LevelName);

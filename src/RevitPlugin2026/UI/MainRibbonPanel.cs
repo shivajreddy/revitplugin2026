@@ -24,7 +24,7 @@ public static class MainRibbonPanel
         panel.AddItem(buttonData);
     }
 
-    private static System.Windows.Media.ImageSource? LoadBitmapImage(string resourcePath)
+    private static System.Windows.Media.Imaging.BitmapImage? LoadBitmapImage(string resourcePath)
     {
         try
         {

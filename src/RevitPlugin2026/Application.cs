@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.IO;
 using Autodesk.Revit.UI;
 using RevitPlugin2026.UI;
 using Serilog;
@@ -21,7 +23,7 @@ public class Application : IExternalApplication
                     "RevitPlugin2026", "logs", "plugin-.log"),
                 rollingInterval: RollingInterval.Day,
                 retainedFileCountLimit: 7)
-            .WriteTo.Debug()
+            .WriteTo.Debug(formatProvider: CultureInfo.InvariantCulture)
             .CreateLogger();
 
         Logger.Information("RevitPlugin2026 starting (Revit {Version})",
