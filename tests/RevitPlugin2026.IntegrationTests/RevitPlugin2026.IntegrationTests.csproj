@@ -6,7 +6,7 @@
     <IsTestProject>true</IsTestProject>
     <UseWPF>true</UseWPF>
     <AssemblyName>RevitPlugin2026.IntegrationTests</AssemblyName>
-    <!-- Integration tests are excluded in CI via --filter "Category!=Integration".
+    <!-- Integration tests are excluded in CI via the filter "Category!=Integration".
          They require Revit 2026 to be installed locally and use RTF to run inside Revit. -->
   </PropertyGroup>
 
@@ -29,8 +29,8 @@
     </PackageReference>
   </ItemGroup>
 
-  <!-- Include the test .rvt model file in build output -->
-  <ItemGroup>
+  <!-- Include the test .rvt model file in build output (only when it exists locally) -->
+  <ItemGroup Condition="Exists('RTF\TestModel.rvt')">
     <Content Include="RTF\TestModel.rvt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
